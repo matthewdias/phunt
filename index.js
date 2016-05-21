@@ -144,14 +144,15 @@ function start(token, username){
       for (var i in posts) {
         vorpal.log(chalk.bold.blue('- ' + posts[i].name) + '  ' + emoji.get(':arrow_up_small:') + ' ' + posts[i].votes_count + '   ' + emoji.get(':speech_balloon:') + ' ' + posts[i].comments_count);
         vorpal.log('  ' + chalk.italic(posts[i].tagline));
-        vorpal.log('  ' + chalk.italic.underline.dim(posts[i].discussion_url));
+        vorpal.log('  ' + chalk.italic.underline.dim(posts[i].redirect_url));
       }
 
       callback();
     });
   });
 
-  vorpal.delimiter('@' + username + ' => ').show();
+  // vorpal.delimiter('@' + username + ' => ').show();
+  vorpal.parse(process.argv);
 }
 
 
