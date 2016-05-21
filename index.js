@@ -87,32 +87,7 @@ function me(token, cb){
  * Splash screen
  */
  function splash(){
-  console.log(chalk.dim('ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt'));
-  console.log(chalk.dim('ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt'));
-  console.log(chalk.dim('ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt'));
-  console.log(chalk.dim('ttttttttttttttttttt;                   `ttttttttttttttttttttt'));
-  console.log(chalk.dim('ttttttttttttttttttt;                      ttttttttttttttttttt'));
-  console.log(chalk.dim('ttttttttttttttttttt;                       tttttttttttttttttt'));
-  console.log(chalk.dim('ttttttttttttttttttt;     ;ttttttttttt,      ttttttttttttttttt'));
-  console.log(chalk.dim('ttttttttttttttttttt;     ;tttttttttttt,     ;tttttttttttttttt'));
-  console.log(chalk.dim('ttttttttttttttttttt;     ;tttttttttttt,     ;tttttttttttttttt'));
-  console.log(chalk.dim('ttttttttttttttttttt;     ;ttttttttttt,      ttttttttttttttttt'));
-  console.log(chalk.dim('ttttttttttttttttttt;                       tttttttttttttttttt'));
-  console.log(chalk.dim('ttttttttttttttttttt;                      ttttttttttttttttttt'));
-  console.log(chalk.dim('ttttttttttttttttttt;                   ,ttttttttttttttttttttt'));
-  console.log(chalk.dim('ttttttttttttttttttt;     ;ttttttttttttttttttttttttttttttttttt'));
-  console.log(chalk.dim('ttttttttttttttttttt;     ;ttttttttttttttttttttttttttttttttttt'));
-  console.log(chalk.dim('ttttttttttttttttttt;     ;ttttttttttttttttttttttttttttttttttt'));
-  console.log(chalk.dim('ttttttttttttttttttt;     ;ttttttttttttttttttttttttttttttttttt'));
-  console.log(chalk.dim('ttttttttttttttttttt;     ;ttttttttttttttttttttttttttttttttttt'));
-  console.log(chalk.dim('ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt'));
-  console.log(chalk.dim('ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt'));
-  console.log(chalk.dim('ttttttttttt                                       ttttttttttt'));
-  console.log(chalk.dim('ttttttttttt    ') + chalk.bold('------------ PHUNT ------------') + chalk.dim('    ttttttttttt'));
-  console.log(chalk.dim('ttttttttttt    PRODUCTHUNT COMMAND LINE CLIENT    ttttttttttt'));
-  console.log(chalk.dim('ttttttttttt                                       ttttttttttt'));
-  console.log(chalk.dim('ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt'));
-  console.log(chalk.dim('ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt\n'));
+  console.log(chalk.dim('------------ ') + chalk.bold('PHUNT') + chalk.dim(' ------------'));
 }
 
 
@@ -147,10 +122,13 @@ function start(token, username){
    * Get the tech posts of today
    */
   vorpal
-  .command('posts', 'Get the tech posts of today')
+  .command('posts [days_ago]', 'Get the tech posts of today')
   .action(function(args, callback) {
+    if(!args.days_ago) {
+      args.days_ago = 0;
+    }
     unirest
-    .get(api_url + '/posts')
+    .get(api_url + '/posts?days_ago=' + args.days_ago)
     .header({
       'Accept'        : 'application/json',
       'Content-Type'  : 'application/json',
@@ -159,12 +137,14 @@ function start(token, username){
     .end(function (response) {
       var body    = response.body;
       var posts   = body.posts;
+      var date    = posts[1].day;
+
+      vorpal.log(chalk.bold.magenta(date));
 
       for (var i in posts) {
-        vorpal.log(chalk.bold.blue('\n- ' + posts[i].name));
+        vorpal.log(chalk.bold.blue('- ' + posts[i].name) + '  ' + emoji.get(':arrow_up_small:') + ' ' + posts[i].votes_count + '   ' + emoji.get(':speech_balloon:') + ' ' + posts[i].comments_count);
         vorpal.log('  ' + chalk.italic(posts[i].tagline));
-        vorpal.log('  ' + emoji.get(':heart:') + ' ' + posts[i].votes_count + '   ' + emoji.get(':thought_balloon:') + ' ' + posts[i].comments_count);
-        vorpal.log('  ' + chalk.italic.underline.dim(posts[i].discussion_url) + '\n');
+        vorpal.log('  ' + chalk.italic.underline.dim(posts[i].discussion_url));
       }
 
       callback();
